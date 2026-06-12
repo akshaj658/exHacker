@@ -16,6 +16,8 @@ from agents.solution_architect import solution_architect_node
 from agents.presentation_agent import presentation_agent_node
 from agents.pitch_agent import pitch_agent_node
 from agents.report_generator import report_generator_node
+from agents.ppt_designer import ppt_designer_node
+
 
 from workflow.session_store import get_session, save_session
 from workflow.steps import get_next_step, get_step
@@ -30,6 +32,7 @@ AGENT_NODES: dict = {
     "idea_validator": idea_validator_node,
     "solution_architect": solution_architect_node,
     "presentation_agent": presentation_agent_node,
+    "ppt_designer": ppt_designer_node,
     "pitch_agent": pitch_agent_node,
     "report_generator": report_generator_node,
     # "select_idea" is intentionally absent — it's a user action, not an agent

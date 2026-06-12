@@ -66,6 +66,14 @@ STEPS: list[dict] = [
         "symbol": "▣",
     },
     {
+    "key": "ppt_designer",
+    "label": "PPT Designer",
+    "description": "Investor-grade deck theme, layouts and image prompts",
+    "output_key": "ppt_design",
+    "is_select_step": False,
+    "symbol": "ss",
+    },
+    {
         "key": "pitch_agent",
         "label": "Pitch Agent",
         "description": "30-second, 2-minute, and 5-minute pitch scripts",

@@ -9,10 +9,10 @@ from agents.idea_validator import idea_validator_node
 from agents.idea_selector import idea_selector_node
 from agents.solution_architect import solution_architect_node
 from agents.presentation_agent import presentation_agent_node
+from agents.ppt_designer import ppt_designer_node
 from agents.pitch_agent import pitch_agent_node
 from agents.report_generator import report_generator_node
 from agents.opportunity_planner import opportunity_planner_node
-
 
 builder = StateGraph(AgentState)
 
@@ -21,6 +21,11 @@ builder = StateGraph(AgentState)
 builder.add_node(
     "problem_analyst",
     problem_analyst_node
+)
+
+builder.add_node(
+    "opportunity_planner",
+    opportunity_planner_node
 )
 
 builder.add_node(
@@ -49,6 +54,11 @@ builder.add_node(
 )
 
 builder.add_node(
+    "ppt_designer",
+    ppt_designer_node
+)
+
+builder.add_node(
     "pitch_agent",
     pitch_agent_node
 )
@@ -56,11 +66,6 @@ builder.add_node(
 builder.add_node(
     "report_generator",
     report_generator_node
-)
-
-builder.add_node(
-    "opportunity_planner",
-    opportunity_planner_node
 )
 
 # Entry Point
@@ -103,6 +108,11 @@ builder.add_edge(
 
 builder.add_edge(
     "presentation_agent",
+    "ppt_designer"
+)
+
+builder.add_edge(
+    "ppt_designer",
     "pitch_agent"
 )
 
