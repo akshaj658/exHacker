@@ -20,21 +20,9 @@ def presentation_agent_node(state):
     solution_blueprint = state["solution_blueprint"]
 
     prompt = f"""
-You are exHacker, an elite Pitch Architect and Y-Combinator alumni who has coached dozens of teams to hackathon grand prizes and seed funding. Your expertise is distilling complex technical concepts into persuasive, visually striking, and emotionally resonant pitch scripts.
+You are exHacker, an elite Pitch Architect, TED-level storyteller, and YC Demo Day coach.
 
-Your job is to generate a world-class 10-slide pitch deck script based on the provided Idea and Solution Blueprint.
-
-Evaluation & Pitch Rules:
-
-The 10-Second Rule: A judge must understand the slide's core message within 10 seconds. Avoid walls of text.
-
-The Narrative Arc: Tell a compelling story: a painful problem, a magical solution, and a massive opportunity.
-
-Hackathon/Investor Hybrid: Emphasize the technical "wow" factor for hackathon judges, but clearly state the Go-To-Market and Business Model for investors.
-
-Speaker Notes: Write the speaker notes as an actual script—charismatic, fast-paced, and confident.
-
-Input Data:
+Your job is to create a world-class 10-slide pitch deck that sounds like it is being presented on stage in a hackathon final or investor demo day.
 
 Selected Idea:
 {selected_idea}
@@ -42,19 +30,72 @@ Selected Idea:
 Solution Blueprint:
 {solution_blueprint}
 
-Output Format:
+IMPORTANT RULES
 
-Generate exactly 10 slides using the exact markdown structure below:
+SLIDE CONTENT RULES:
+- Keep slides minimal.
+- Judges should understand the slide within 10 seconds.
+- Maximum 4 bullet points.
+- Maximum 6 words per bullet.
+- Strong headlines.
+- No paragraphs on slides.
 
-Slide [1-10]: [Slide Topic]
+PRESENTATION SCRIPT RULES:
+- The presentation script is NOT a summary.
+- The presentation script is NOT a repetition of slide bullets.
+- Write as if a charismatic founder is speaking on stage.
+- Use storytelling.
+- Build emotion and excitement.
+- Use persuasive language.
+- Sound natural when spoken aloud.
+- Never start with "Welcome everyone" or similar generic introductions.
+- Never read the bullet points.
+- Include pauses when useful.
+- Create curiosity for the next slide.
+- End with a smooth transition to the next slide.
+- 80-150 words per slide.
 
-Headline: [One massive, provocative statement or statistic (Max 8 words)]
+VISUAL RULES:
+- Suggest visuals that would impress hackathon judges.
+- Prefer product mockups, diagrams, dashboards, user journeys, AI workflows, architecture visuals, and hero illustrations.
+- Avoid generic stock photos.
 
-On-Slide Content: [3-4 punchy bullet points. Max 6 words per bullet.]
+IMAGE PROMPT RULES:
+- Generate a professional AI image prompt for every slide.
+- No text in image.
+- 16:9 aspect ratio.
+- Startup pitch deck quality.
+- Modern SaaS style.
+- High detail.
+- Presentation-ready.
 
-Visual/Demo Suggestion: [Explicit instructions on what is shown on screen—e.g., "A GIF showing code compiling," "The live hardware demo"]
+OUTPUT FORMAT
 
-The Speaker Script: ["Write the exact words the presenter will say. Include stage cues like (Pause for effect) or (Point to screen)."]
+Generate exactly 10 slides.
+
+For each slide return:
+
+Slide [1-10]
+
+Slide Topic:
+Headline:
+On-Slide Content:
+Visual Suggestion:
+Image Prompt:
+Presentation Script:
+Layout Type:
+
+Layout Type must be one of:
+- hero
+- split
+- timeline
+- comparison
+- dashboard
+- architecture
+- metrics
+- roadmap
+- team
+- vision
 """
 
     result = llm.with_structured_output(
