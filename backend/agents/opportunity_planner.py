@@ -1,16 +1,11 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from dotenv import find_dotenv, load_dotenv
+from agents.llm_client import llm
 
 from schemas.opportunity_analysis import OpportunityAnalysis
 
-load_dotenv()
-
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY2")
-)
+load_dotenv(find_dotenv(), override=True)
 
 
 def opportunity_planner_node(state):
@@ -23,7 +18,7 @@ You are exHacker's Opportunity Planner, an elite product strategist and hackatho
 Your goal is to dissect the provided Problem Analysis and extract specific, actionable opportunities that can be leveraged into a winning hackathon project and a viable micro-startup.
 
 ### Analysis Lenses:
-Do not provide generic business advice. Analyze the input strictly through these 5 lenses:
+Do not provide generic business advice. Analyze the input strictly through these lenses:
 1. The "Unsexy" Market Gap: What boring, tedious, or ignored aspect of this problem is ripe for disruption?
 2. The Marginalized User: Who is experiencing this problem the worst but has the least money/tools to solve it? 
 3. The AI Arbitrage: Where can an LLM or AI agent replace a massive bottleneck, completely bypassing traditional software logic?
@@ -34,30 +29,16 @@ Do not provide generic business advice. Analyze the input strictly through these
 Problem Analysis:
 {analysis}
 
-### Output Format:
-Provide a brutally honest, highly scannable analysis using the exact markdown structure below:
-
-## The Whitespace Analysis
-
-### 1. The "Unsexy" Market Gap
-* **The Gap:** [1-2 sentences identifying the boring but valuable problem]
-* **Why others ignore it:** [Brief explanation of why developers overlook this]
-
-### 2. The Underserved Persona
-* **Target User:** [Specific description of the user, e.g., "Freelance paralegals," not "Legal professionals"]
-* **Their Pain Point:** [What is costing them time/money right now?]
-
-### 3. The AI Arbitrage Opportunity
-* **The Traditional Bottleneck:** [What takes hours to do manually?]
-* **The AI Solution:** [Exactly how AI bypasses this bottleneck]
-
-### 4. The Hackathon "Trojan Horse" Angle
-* **The Pitch:** [How to frame this to judges so it sounds groundbreaking]
-* **The MVP Scope:** [What tiny slice of the problem to actually build in a weekend]
-
-### 5. Post-Hackathon Monetization
-* **The Hook:** [Why would someone pay for this immediately?]
-* **Revenue Model:** [e.g., Pay-per-API call, SaaS tier, one-time audit fee]
+### Output Instructions:
+Populate the fields of the output schema exactly as follows:
+- `market_gaps`: List of identified "unsexy" market gaps and why they are ignored.
+- `underserved_users`: Specific target users experiencing this problem and their exact pain points.
+- `high_impact_opportunities`: Specific, high-impact opportunity areas to focus on.
+- `technical_opportunities`: Leverages of specific technical APIs, tools, or libraries.
+- `innovation_opportunities`: Opportunities for innovative processes or user experiences.
+- `ai_opportunities`: AI arbitrage opportunities where AI agents or LLMs bypass manual logic.
+- `unique_hackathon_angles`: Hackathon "Trojan Horse" pitches and MVP scope ideas.
+- `monetization_opportunities`: Monetization hooks and post-hackathon revenue models (e.g. SaaS tiers, one-time fees).
 """
 
     result = llm.with_structured_output(

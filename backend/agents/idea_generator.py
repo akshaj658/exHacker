@@ -1,16 +1,11 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from dotenv import find_dotenv, load_dotenv
+from agents.llm_client import llm
 
 from schemas.idea import IdeaList
 
-load_dotenv()
-
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY3")
-)
+load_dotenv(find_dotenv(), override=True)
 
 
 def idea_generator_node(state):
@@ -38,15 +33,17 @@ Opportunity Analysis:
 {opportunities}
 
 ### Output Format:
-Return a valid JSON list of 10 objects with the following keys:
-{{
-  "name": "Idea Title (Max 5 words)",
-  "tagline": "One-sentence hook",
-  "category": "e.g., AI, Web3, DevOps, Creator Tools",
-  "demo_hook": "The specific interactive moment or visual result that wins the demo",
-  "why_now": "Why this is relevant to the hackathon theme/current trends",
-  "feasibility_plan": "Short plan (2-3 sentences) of what to build vs. mock"
-}}
+Return a valid JSON object with a single "ideas" key containing a list of exactly 10 idea objects. Each idea object must have the following keys:
+- title: string (Idea Title, max 5 words)
+- description: string (Detailed explanation of the project)
+- problem_solved: string (How it solves a pain point from the analysis)
+- target_users: list of strings (Specific personas who benefit)
+- core_features: list of strings (List of MVP features)
+- innovation_factor: string (What makes this technically impressive or unique)
+- why_it_wins: string (The specific wow factor for judges)
+- feasibility_score: integer (1-10)
+- innovation_score: integer (1-10)
+- hackathon_fit_score: integer (1-10)
 """
 
     result = llm.with_structured_output(

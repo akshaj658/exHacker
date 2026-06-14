@@ -3,10 +3,16 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-# Load .env FIRST — agents create LLM instances at import time,
-# so env vars must be set before any agent module is imported.
-from dotenv import find_dotenv, load_dotenv
-load_dotenv(find_dotenv(usecwd=False, raise_error_if_not_found=False))
+import os
+from dotenv import load_dotenv
+
+# Deterministically load the .env file from the root directory with override=True
+api_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.dirname(api_dir)
+root_dir = os.path.dirname(backend_dir)
+env_path = os.path.join(root_dir, ".env")
+load_dotenv(dotenv_path=env_path, override=True)
+
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -325,3 +331,57 @@ async def workflow_output(session_id: str):
         "step_meta": get_step(last),
         "output": session["step_outputs"].get(last),
     }
+
+
+@app.get("/workflow/download-pptx/{session_id}")
+async def download_pptx(session_id: str):
+    """
+    Generate and download a professional, styled 13-slide pitch deck (pptx) 
+    based on the strategy session output.
+    """
+    from fastapi.responses import StreamingResponse
+    from agents.pitch_deck_generator import generate_pitch_deck_content
+    from services.pptx_generator import build_pptx_presentation
+
+    session = get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    state = session.get("state") or {}
+    selected_idea = state.get("selected_idea")
+    if not selected_idea:
+        raise HTTPException(
+            status_code=400, 
+            detail="Session has not selected an idea. Complete the strategy workflow first."
+        )
+
+    try:
+        # Run pitch deck narrative agent
+        loop = asyncio.get_event_loop()
+        deck_data = await loop.run_in_executor(
+            None, generate_pitch_deck_content, state
+        )
+        
+        # Load Gemini Imagen API Key from environment variables
+        api_key = os.getenv("GEMINI_IMAGEN_API_KEY")
+        
+        # Build PowerPoint with session cache and Imagen integrations
+        stream = await loop.run_in_executor(
+            None, build_pptx_presentation, deck_data, state, session_id, api_key
+        )
+        
+        project_name = selected_idea.get("title", "Project").replace(" ", "_")
+        filename = f"{project_name}_Pitch_Deck.pptx"
+
+        return StreamingResponse(
+            stream,
+            media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Access-Control-Expose-Headers": "Content-Disposition"
+            }
+        )
+    except Exception as exc:
+        tb = traceback.format_exc()
+        print(f"[/workflow/download-pptx ERROR]\n{tb}")
+        raise HTTPException(status_code=500, detail=str(exc))

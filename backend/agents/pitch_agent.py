@@ -1,23 +1,27 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from dotenv import find_dotenv, load_dotenv
+from agents.llm_client import llm
 
 from schemas.pitch import PitchPackage
 
-load_dotenv()
-
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY1")
-)
+load_dotenv(find_dotenv(), override=True)
 
 
 def pitch_agent_node(state):
 
     selected_idea = state["selected_idea"]
 
-    slides = state["slides"]
+    # Strip visual suggestions, image prompts, layout types, and speaker scripts to optimize tokens
+    minimized_slides = [
+        {
+            "slide_number": s.get("slide_number"),
+            "title": s.get("title"),
+            "headline": s.get("headline"),
+            "content": s.get("content")
+        }
+        for s in state.get("slides", [])
+    ]
 
     prompt = f"""
 You are an elite startup founder, YC mentor,
@@ -50,7 +54,7 @@ Selected Idea:
 
 Presentation Slides:
 
-{slides}
+{minimized_slides}
 """
 
     result = llm.with_structured_output(

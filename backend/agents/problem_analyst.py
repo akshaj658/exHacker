@@ -1,16 +1,11 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from dotenv import find_dotenv, load_dotenv
+from agents.llm_client import llm
 
 from schemas.problem_analysis import ProblemAnalysis
 
-load_dotenv()
-
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY1")
-)
+load_dotenv(find_dotenv(), override=True)
 
 
 def problem_analyst_node(state):

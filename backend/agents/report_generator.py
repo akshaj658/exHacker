@@ -55,10 +55,14 @@ class _ProblemAnalysis(BaseModel):
 
 
 class _OpportunityAnalysis(BaseModel):
-    market_gap:        str       = ""
-    target_market:     str       = ""
-    market_size:       str       = ""
-    key_opportunities: list[str] = Field(default_factory=list)
+    market_gaps:                list[str] = Field(default_factory=list)
+    underserved_users:          list[str] = Field(default_factory=list)
+    high_impact_opportunities:  list[str] = Field(default_factory=list)
+    technical_opportunities:     list[str] = Field(default_factory=list)
+    innovation_opportunities:    list[str] = Field(default_factory=list)
+    ai_opportunities:            list[str] = Field(default_factory=list)
+    unique_hackathon_angles:     list[str] = Field(default_factory=list)
+    monetization_opportunities: list[str] = Field(default_factory=list)
 
 
 # ─── 2. Sanitisation ─────────────────────────────────────────────────────────
@@ -314,14 +318,29 @@ class MarkdownVisionRenderer:
 
 {t('vision.section.opportunity', locale)}
 
-**{t('vision.field.market_gap', locale)}:** {_sanitize(oa.market_gap)}
+### Market Gaps
+{_bullet(oa.market_gaps)}
 
-**{t('vision.field.target_market', locale)}:** {_sanitize(oa.target_market)}
+### Underserved Users
+{_bullet(oa.underserved_users)}
 
-**{t('vision.field.market_size', locale)}:** {_sanitize(oa.market_size)}
+### High-Impact Opportunities
+{_bullet(oa.high_impact_opportunities)}
 
-### {t('vision.field.key_opportunities', locale)}
-{_bullet(oa.key_opportunities)}
+### Technical Opportunities
+{_bullet(oa.technical_opportunities)}
+
+### Innovation Opportunities
+{_bullet(oa.innovation_opportunities)}
+
+### AI Opportunities
+{_bullet(oa.ai_opportunities)}
+
+### Unique Hackathon Angles (Trojan Horse)
+{_bullet(oa.unique_hackathon_angles)}
+
+### Monetization Opportunities
+{_bullet(oa.monetization_opportunities)}
 
 ---
 

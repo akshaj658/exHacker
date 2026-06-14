@@ -71,6 +71,7 @@ export interface Slide {
   objective: string;
   content: string[];
   speaker_notes: string;
+  presentation_script?: string;
   visual_suggestion: string;
   slide_type?: string;
 }
@@ -84,10 +85,14 @@ export interface ProblemAnalysis {
 }
 
 export interface OpportunityAnalysis {
-  market_gap: string;
-  target_market: string;
-  market_size: string;
-  key_opportunities: string[];
+  market_gaps: string[];
+  underserved_users: string[];
+  high_impact_opportunities: string[];
+  technical_opportunities: string[];
+  innovation_opportunities: string[];
+  ai_opportunities: string[];
+  unique_hackathon_angles: string[];
+  monetization_opportunities: string[];
 }
 
 // ─── Full project result ─────────────────────────────────────────────────────
@@ -103,6 +108,7 @@ export interface ProjectResult {
   selected_idea: Idea;
   solution_blueprint: SolutionBlueprint;
   slides: Slide[];
+  ppt_design: PPTDesign;
   pitch_30s: string;
   pitch_2min: string;
   pitch_5min: string;
@@ -167,4 +173,23 @@ export interface WorkflowStateResponse {
   step_outputs: Record<string, Record<string, unknown>>;
   steps_meta: StepMeta[];
   done: boolean;
+}
+
+export interface SlideDesign {
+  slide_number: number;
+  layout: string;
+  needs_image: boolean;
+  visual_focus: string;
+  image_prompt: string;
+}
+
+export interface PPTDesign {
+  deck_theme: {
+    style: string;
+    primary_color: string;
+    secondary_color: string;
+    background_style: string;
+    font_family: string;
+  };
+  slide_designs: SlideDesign[];
 }

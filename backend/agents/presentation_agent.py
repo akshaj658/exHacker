@@ -1,16 +1,11 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from dotenv import find_dotenv, load_dotenv
+from agents.llm_client import llm
 
 from schemas.presentation import Presentation
 
-load_dotenv()
-
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY3")
-)
+load_dotenv(find_dotenv(), override=True)
 
 
 def presentation_agent_node(state):
@@ -79,6 +74,7 @@ Slide [1-10]
 
 Slide Topic:
 Headline:
+Objective: (one sentence — what should the audience think/feel/understand after this slide?)
 On-Slide Content:
 Visual Suggestion:
 Image Prompt:
@@ -98,13 +94,14 @@ Layout Type must be one of:
 - vision
 """
 
-    result = llm.with_structured_output(
-        Presentation
-    ).invoke(prompt)
+    result = llm.with_structured_output(Presentation).invoke(prompt)
 
     return {
         "slides": [
-            slide.model_dump()
+            {
+                **slide.model_dump(),
+                "speaker_notes": slide.presentation_script
+            }
             for slide in result.slides
         ]
     }

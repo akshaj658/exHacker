@@ -1,16 +1,11 @@
 import os
 
-from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from dotenv import find_dotenv, load_dotenv
+from agents.llm_client import llm
 
 from schemas.ppt_design import PPTDesign
 
-load_dotenv()
-
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=os.getenv("GROQ_API_KEY3")
-)
+load_dotenv(find_dotenv(), override=True)
 
 
 def ppt_designer_node(state):
@@ -19,7 +14,19 @@ def ppt_designer_node(state):
 
     solution_blueprint = state["solution_blueprint"]
 
-    slides = state["slides"]
+    # Strip verbose presentation scripts to optimize prompt tokens
+    minimized_slides = [
+        {
+            "slide_number": s.get("slide_number"),
+            "title": s.get("title"),
+            "headline": s.get("headline"),
+            "objective": s.get("objective"),
+            "content": s.get("content"),
+            "visual_suggestion": s.get("visual_suggestion"),
+            "layout_type": s.get("layout_type")
+        }
+        for s in state.get("slides", [])
+    ]
 
     prompt = f"""
 You are exHacker's elite PowerPoint Design Director.
@@ -46,7 +53,7 @@ SOLUTION BLUEPRINT
 
 SLIDES
 
-{slides}
+{minimized_slides}
 
 DESIGN RULES
 
